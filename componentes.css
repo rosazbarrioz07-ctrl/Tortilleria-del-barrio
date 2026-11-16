@@ -93,8 +93,8 @@ main:focus { outline: none; } /* el foco llega aquí desde "Saltar al contenido"
   font-weight: 400;
   font-size: var(--tam-6);
   line-height: var(--interlineado-letrero);
-  hyphens: auto;
-  overflow-wrap: break-word;
+  hyphens: manual;      /* nunca pone guion al partir una palabra */
+  overflow-wrap: break-word; /* solo parte una palabra si no cabe de ningún modo */
 }
 
 .cinta-hora {
