@@ -1,0 +1,74 @@
+/* ==========================================================
+   tokens.css — Tortillería del Barrio (dirección 1, "El letrero")
+   Solo variables. Aquí vive todo lo que se puede cambiar.
+   ========================================================== */
+
+:root {
+
+  /* ---------- COLORES (por rol, no por nombre) ---------- */
+  --color-fondo:        #EFE0B5; /* masa de maíz: fondo de toda la página */
+  --color-titulo:       #222E6A; /* azul añil: titulares, precios, bordes (9.6:1 sobre el fondo) */
+  --color-texto:        #141A3C; /* azul casi negro: texto corrido */
+  --color-franja:       #222E6A; /* fondo de la franja, la cinta de hora y el enlace "saltar" */
+  --color-sobre-franja: #EFE0B5; /* texto sobre franja y cinta (9.6:1) */
+  --color-accion:       #BE2A2A; /* rojo: SOLO el botón de WhatsApp */
+  --color-sobre-accion: #FFF8E6; /* texto del botón (5.6:1) */
+  --color-linea:        #222E6A; /* bordes y renglones punteados */
+  --color-trama-foto:   rgba(34, 46, 106, .16); /* rayas del espacio de foto */
+  --color-foco:         #141A3C; /* anillo de foco con teclado sobre fondo claro */
+  --color-foco-sobre-accion: #FFF8E6; /* anillo de foco dentro del botón rojo (5.6:1) */
+
+  /* ---------- FUENTES (solo del sistema, cero descargas) ---------- */
+  --fuente-letrero: "Haettenschweiler", "Impact", "Arial Narrow Bold", "Arial Narrow", sans-serif;
+  --fuente-texto:   "Trebuchet MS", "Segoe UI", system-ui, sans-serif;
+
+  /* ---------- TAMAÑOS DE TEXTO (6) ----------
+     Todos en rem: crecen con la letra del sistema. Ninguno usa vw. */
+  --tam-1: 1.125rem;  /* 18 px: notas, unidades */
+  --tam-2: 1.25rem;   /* 20 px: texto base */
+  --tam-3: 1.5rem;    /* 24 px: nombres de producto, franja, instrucción */
+  --tam-4: 2.25rem;   /* 36 px: botón, títulos de sección, hora */
+  --tam-5: 2.75rem;   /* 44 px: precios */
+  --tam-6: 2.75rem;   /* titular: base para letra muy grande; sube con los @media de abajo */
+
+  /* ---------- TEXTO: ritmo ---------- */
+  --interlineado-texto:   1.5;
+  --interlineado-letrero: .9;
+  --espaciado-letrero:    .05em;
+
+  /* ---------- ESPACIOS (base 8 px) ---------- */
+  --esp-medio: .25rem;  /*  4 px: línea punteada, detalles */
+  --esp-1:     .5rem;   /*  8 px */
+  --esp-2:     1rem;    /* 16 px */
+  --esp-3:     1.5rem;  /* 24 px */
+  --esp-4:     2.5rem;  /* 40 px */
+
+  /* ---------- MEDIDAS ---------- */
+  --alto-min-boton: calc(var(--esp-1) * 11); /* 88 px como MÍNIMO: el botón crece si el texto crece */
+  --grosor-borde:   var(--esp-1);            /* 8 px: borde de letrero */
+  --grosor-foco:    var(--esp-medio);        /* 4 px */
+  --ancho-lectura:  36rem;                   /* 576 px: una sola columna (celular y tablet); en computadora sube a 72rem */
+
+  /* ---------- ZONAS SEGURAS DEL CELULAR (muesca y barra de inicio) ---------- */
+  --seguro-arriba: env(safe-area-inset-top, 0px);
+  --seguro-abajo:  env(safe-area-inset-bottom, 0px);
+  --seguro-izq:    env(safe-area-inset-left, 0px);
+  --seguro-der:    env(safe-area-inset-right, 0px);
+
+  /* ---------- RADIOS (2) ---------- */
+  --radio-recto: 0;       /* botón, foto, franja: esquinas de letrero */
+  --radio-suave: .5rem;   /* 8 px: solo la cinta de la hora */
+
+  /* ---------- DETALLES ---------- */
+  --giro-cinta: -1.5deg;  /* la cinta de la hora va ligeramente ladeada */
+}
+
+/* Una sola página que se adapta al tamaño de pantalla.
+   Los cortes están en em (no en px): si la letra del sistema está al 200%,
+   el navegador cree que la pantalla es más angosta y usa la versión más sencilla.
+     celular:      1 columna, titular mediano
+     tablet:       1 columna, titular grande     (desde 40em)
+     computadora:  2 columnas, página más ancha  (desde 56em) */
+@media (min-width: 24em) { :root { --tam-6: 4.5rem; } }
+@media (min-width: 40em) { :root { --tam-6: 6rem; } }
+@media (min-width: 56em) { :root { --ancho-lectura: 72rem; } }

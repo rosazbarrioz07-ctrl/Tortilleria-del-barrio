@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+<meta charset="utf-8">
+<!-- Sin maximum-scale ni user-scalable: el usuario puede hacer zoom -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- Color de la barra del navegador en el celular: debe ser igual a --color-franja de tokens.css -->
+<meta name="theme-color" content="#222E6A">
+<title>Tortillería del Barrio: tortilla caliente y precios de hoy</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="componentes.css">
+</head>
+<body>
+<a class="saltar" href="#contenido">Saltar al contenido</a>
+
+<header class="franja">Tortillería del Barrio</header>
+
+<main id="contenido" class="contenedor" tabindex="-1">
+  <section class="hero">
+    <h1 class="titulo-letrero">Tortilla caliente</h1>
+    <p class="cinta-hora">hasta las 2:30 p.m.</p>
+    <p class="instruccion">Apártela por WhatsApp antes de la 1:00 y pase por ella lista.</p>
+  </section>
+
+  <img class="foto" src="foto-tortillas.jpg" width="640" height="480"
+       alt="Tortillas recién hechas sobre el comal, algunas infladas por el calor, y una mano volteando una de ellas.">
+
+  <section class="seccion-precios" aria-labelledby="titulo-precios">
+    <h2 class="titulo-seccion" id="titulo-precios">Precios de hoy</h2>
+    <!-- Aviso para quien visita la página: se llena solo si los precios no se pudieron actualizar -->
+    <div class="aviso-precios" id="aviso-precios" role="status"></div>
+    <!-- PLANTILLA DE LA HOJA DE GOOGLE (3 columnas, encabezado en la fila 1):
+           Producto,Unidad,Precio
+           Tortilla,por kilo,28
+           Masa,por kilo,22
+           Totopos,bolsa,35
+           Salsa,porción,25
+           Tlayudas,solo los sábados,20
+         Los precios son SUGERIDOS: cambiarlos por los reales.
+         La lista de abajo copia esta plantilla y es el RESPALDO: se ve si la hoja no responde.
+         Cuando la hoja responde, la lista se reemplaza con lo que escriba Kevin. -->
+    <ul class="lista-precios" id="lista-precios">
+      <li class="renglon-precio"><span class="renglon-precio__nombre">Tortilla<span class="renglon-precio__unidad">por kilo</span></span><span class="renglon-precio__precio">$28</span></li>
+      <li class="renglon-precio"><span class="renglon-precio__nombre">Masa<span class="renglon-precio__unidad">por kilo</span></span><span class="renglon-precio__precio">$22</span></li>
+      <li class="renglon-precio"><span class="renglon-precio__nombre">Totopos<span class="renglon-precio__unidad">bolsa</span></span><span class="renglon-precio__precio">$35</span></li>
+      <li class="renglon-precio"><span class="renglon-precio__nombre">Salsa<span class="renglon-precio__unidad">porción</span></span><span class="renglon-precio__precio">$25</span></li>
+      <li class="renglon-precio"><span class="renglon-precio__nombre">Tlayudas<span class="renglon-precio__unidad">solo los sábados</span></span><span class="renglon-precio__precio">$20</span></li>
+    </ul>
+  </section>
+
+  <p class="nota-pie">Cobramos en efectivo al recoger o al entregar. Llevamos pedidos de 2 kilos o más hasta 5 cuadras a la redonda.</p>
+</main>
+
+<nav class="barra-pedir" aria-label="Pedir por WhatsApp">
+  <a class="boton-pedir" href="https://wa.me/522441206407?text=Hola%2C%20vi%20su%20p%C3%A1gina%20y%20quiero%20apartar...">Apartar por WhatsApp<span class="solo-lector">, se abre la app de WhatsApp</span></a>
+</nav>
+<script>
+/* Precios desde Google Sheets.
+   La hoja "Precios" tiene encabezado en la fila 1:  Producto | Unidad | Precio | ¿Mostrar?
+   Pegar abajo el enlace de:  Archivo > Compartir > Publicar en la Web > hoja "Precios" > formato CSV */
+(function () {
+  var URL_HOJA_PRECIOS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vToM4Ju9ieKc9R2FWlDNyG4UZFprn7gVMtGFQLnFnorHGHK1Do7pZhLcOy-G4sWRg/pub?gid=1201076292&single=true&output=csv";
+
+  var lista = document.getElementById("lista-precios");
+  var aviso = document.getElementById("aviso-precios");
+  if (!lista || !aviso || URL_HOJA_PRECIOS.indexOf("https://") !== 0) return;
+
+  /* "¿Mostrar?" -> "mostrar", "Sí" -> "si": así no importan acentos, signos ni mayúsculas */
+  function limpiar(t) {
+    return String(t || "").toLowerCase().normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, "");
+  }
+
+  function filasCsv(texto) {
+    var filas = [], fila = [], campo = "", comillas = false, i, c;
+    for (i = 0; i < texto.length; i++) {
+      c = texto.charAt(i);
+      if (comillas) {
+        if (c === '"' && texto.charAt(i + 1) === '"') { campo += '"'; i++; }
+        else if (c === '"') { comillas = false; }
+        else { campo += c; }
+      } else if (c === '"') { comillas = true; }
+      else if (c === ",") { fila.push(campo); campo = ""; }
+      else if (c === "\n" || c === "\r") {
+        if (c === "\r" && texto.charAt(i + 1) === "\n") i++;
+        fila.push(campo); filas.push(fila); fila = []; campo = "";
+      } else { campo += c; }
+    }
+    if (campo !== "" || fila.length) { fila.push(campo); filas.push(fila); }
+    return filas;
+  }
+
+  /* Acepta "28", "$28", "28.50", "28,50" o "28 pesos": toma el primer número */
+  function precio(texto) {
+    var m = String(texto).replace(/\s/g, "").match(/\d+(?:[.,]\d+)?/);
+    if (!m) return null;
+    var n = parseFloat(m[0].replace(",", "."));
+    if (!isFinite(n)) return null;
+    return "$" + (n % 1 === 0 ? n : n.toFixed(2));
+  }
+
+  function renglon(nombre, unidad, texto) {
+    var li = document.createElement("li");
+    li.className = "renglon-precio";
+    var n = document.createElement("span");
+    n.className = "renglon-precio__nombre";
+    n.appendChild(document.createTextNode(nombre));
+    if (unidad) {
+      var u = document.createElement("span");
+      u.className = "renglon-precio__unidad";
+      u.textContent = unidad;
+      n.appendChild(u);
+    }
+    var p = document.createElement("span");
+    p.className = "renglon-precio__precio";
+    p.textContent = texto;
+    li.appendChild(n);
+    li.appendChild(p);
+    return li;
+  }
+
+  fetch(URL_HOJA_PRECIOS)
+    .then(function (r) {
+      if (!r.ok) throw new Error("La hoja respondió con el código " + r.status);
+      return r.text();
+    })
+    .then(function (texto) {
+      var filas = filasCsv(texto);
+      var cab = (filas[0] || []).map(limpiar);
+      function col(nombre, defecto) { var i = cab.indexOf(nombre); return i === -1 ? defecto : i; }
+      var cN = col("producto", 0), cU = col("unidad", 1), cP = col("precio", 2), cM = col("mostrar", 3);
+      var nuevos = [], malas = 0;
+
+      filas.slice(1).forEach(function (f, i) {
+        var nombre = (f[cN] || "").trim();
+        var unidad = (f[cU] || "").trim();
+        var crudo = (f[cP] || "").trim();
+        if (!nombre && !crudo) return;                 /* renglón vacío */
+        if (limpiar(f[cM]) === "no") return;           /* "No" = producto escondido a propósito */
+        var p = precio(crudo);
+        if (!nombre || p === null) {
+          malas++;
+          console.warn("Hoja de precios, renglón " + (i + 2) + ": falta el producto o el precio no es un número.");
+          return;
+        }
+        nuevos.push(renglon(nombre, unidad, p));
+      });
+
+      if (!nuevos.length) throw new Error("La hoja no tiene ningún precio válido para mostrar");
+      while (lista.firstChild) lista.removeChild(lista.firstChild);
+      nuevos.forEach(function (li) { lista.appendChild(li); });
+      aviso.textContent = malas
+        ? "Faltan algunos precios en esta lista. Pregunte por WhatsApp el precio de lo que busca."
+        : "";
+    })
+    .catch(function (e) {
+      console.warn("No se pudieron cargar los precios de la hoja:", e);
+      aviso.textContent = "No pudimos cargar los precios de hoy, así que los que ve pueden no estar al día. Pregunte el precio por WhatsApp antes de venir.";
+    });
+})();
+</script>
+</body>
+</html>

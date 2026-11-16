@@ -1,0 +1,260 @@
+/* ==========================================================
+   componentes.css — Tortillería del Barrio (dirección 1)
+   Depende de tokens.css. No contiene colores, medidas ni
+   fuentes escritas a mano: todo sale de las variables.
+   Orden de carga: tokens.css y después componentes.css
+   ========================================================== */
+
+/* ---------- Base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding-left: var(--seguro-izq);
+  padding-right: var(--seguro-der);
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-family: var(--fuente-texto);
+  font-size: var(--tam-2);
+  line-height: var(--interlineado-texto);
+  overflow-wrap: break-word;
+}
+
+.contenedor {
+  max-width: var(--ancho-lectura);
+  margin: 0 auto;
+  padding: 0 var(--esp-3);
+}
+
+main:focus { outline: none; } /* el foco llega aquí desde "Saltar al contenido" */
+
+/* ---------- Accesibilidad: ocultar solo a la vista ----------
+   (valores de 1px a propósito: es la técnica estándar de "solo lector") */
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Enlace "Saltar al contenido" (aparece con el teclado) ---------- */
+.saltar {
+  position: absolute;
+  top: 0;
+  left: var(--esp-2);
+  z-index: 2;
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--color-franja);
+  color: var(--color-sobre-franja);
+  border-radius: var(--radio-recto);
+  font-size: var(--tam-3);
+  font-weight: 700;
+  text-decoration: none;
+  transform: translateY(-150%);
+}
+
+.saltar:focus {
+  transform: none;
+  outline: var(--grosor-foco) solid var(--color-foco);
+  outline-offset: var(--esp-medio);
+}
+
+/* ---------- Franja del nombre ---------- */
+.franja {
+  /* la franja ocupa todo el ancho, pero su texto se alinea con el contenido */
+  padding: calc(var(--esp-2) + var(--seguro-arriba))
+           max(var(--esp-3), calc((100% - var(--ancho-lectura)) / 2 + var(--esp-3)))
+           var(--esp-2);
+  background: var(--color-franja);
+  color: var(--color-sobre-franja);
+  border-radius: var(--radio-recto);
+  font-family: var(--fuente-letrero);
+  font-size: var(--tam-3);
+  letter-spacing: var(--espaciado-letrero);
+}
+
+/* ---------- Hero: titular, cinta de hora, instrucción ---------- */
+.hero { padding-top: var(--esp-4); }
+
+.titulo-letrero {
+  margin: 0;
+  color: var(--color-titulo);
+  font-family: var(--fuente-letrero);
+  font-weight: 400;
+  font-size: var(--tam-6);
+  line-height: var(--interlineado-letrero);
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+.cinta-hora {
+  display: inline-block;
+  max-width: 100%;
+  margin: var(--esp-2) 0 0;
+  padding: var(--esp-1) var(--esp-2);
+  background: var(--color-franja);
+  color: var(--color-sobre-franja);
+  border-radius: var(--radio-suave);
+  font-family: var(--fuente-letrero);
+  font-size: var(--tam-4);
+  line-height: 1.1;
+  transform: rotate(var(--giro-cinta));
+}
+
+.instruccion {
+  margin: var(--esp-3) 0 0;
+  font-size: var(--tam-3);
+  font-weight: 700;
+}
+
+/* ---------- Foto ---------- */
+.foto {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: var(--esp-4) 0 0;
+  border: var(--grosor-borde) solid var(--color-linea);
+  border-radius: var(--radio-recto);
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--color-trama-foto); /* se ve mientras la foto carga */
+}
+
+/* ---------- Título de sección ---------- */
+.titulo-seccion {
+  margin: var(--esp-4) 0 var(--esp-2);
+  color: var(--color-titulo);
+  font-family: var(--fuente-letrero);
+  font-weight: 400;
+  font-size: var(--tam-4);
+  line-height: 1.1;
+}
+
+/* ---------- Aviso de precios (solo se ve si tiene texto) ---------- */
+.aviso-precios:not(:empty) {
+  margin: 0 0 var(--esp-2);
+  padding: var(--esp-2);
+  border: var(--esp-medio) solid var(--color-linea);
+  border-radius: var(--radio-recto);
+  font-size: var(--tam-2);
+  font-weight: 700;
+}
+
+/* ---------- Lista de precios ---------- */
+.lista-precios {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.renglon-precio {
+  display: flex;
+  flex-wrap: wrap; /* con letra grande, el precio baja debajo del nombre en vez de salirse */
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-1) var(--esp-2);
+  padding: var(--esp-2) 0;
+  border-bottom: var(--esp-medio) dotted var(--color-linea);
+}
+
+.renglon-precio__nombre {
+  font-size: var(--tam-3);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.renglon-precio__unidad {
+  display: block;
+  font-size: var(--tam-1);
+  font-weight: 400;
+}
+
+.renglon-precio__precio {
+  margin-left: auto;
+  color: var(--color-titulo);
+  font-family: var(--fuente-letrero);
+  font-size: var(--tam-5);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* ---------- Nota al pie ---------- */
+.nota-pie {
+  margin: var(--esp-4) 0 0;
+  font-size: var(--tam-1);
+}
+
+/* ---------- Botón de WhatsApp ----------
+   Va al final del documento y se queda pegado abajo al hacer scroll
+   (sticky). A diferencia de "fixed", nunca tapa contenido y puede
+   crecer con la letra grande. */
+.barra-pedir {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  margin-top: var(--esp-4);
+}
+
+.boton-pedir {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--alto-min-boton);
+  padding: var(--esp-2) var(--esp-3) calc(var(--esp-2) + var(--seguro-abajo));
+  touch-action: manipulation;
+  background: var(--color-accion);
+  color: var(--color-sobre-accion);
+  border-top: var(--grosor-borde) solid var(--color-linea);
+  border-radius: var(--radio-recto);
+  font-family: var(--fuente-letrero);
+  font-size: var(--tam-4);
+  line-height: 1.1;
+  letter-spacing: var(--espaciado-letrero);
+  text-align: center;
+  text-decoration: none;
+}
+
+.boton-pedir:focus-visible {
+  outline: var(--grosor-foco) solid var(--color-foco-sobre-accion);
+  outline-offset: calc(var(--esp-1) * -1.5);
+}
+
+/* ---------- Ratón (computadora): pista visual al pasar el cursor ---------- */
+@media (hover: hover) {
+  .boton-pedir:hover {
+    text-decoration: underline;
+    text-decoration-thickness: var(--esp-medio);
+    text-underline-offset: var(--esp-medio);
+  }
+}
+
+/* ---------- Computadora: dos columnas ----------
+   Es la misma página con otra distribución: a la izquierda el titular y la
+   foto, a la derecha los precios. El botón sigue pegado abajo. */
+@media (min-width: 56em) {
+  .contenedor {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "hero  precios"
+      "foto  precios"
+      "nota  nota";
+    column-gap: var(--esp-4);
+    align-items: start;
+  }
+  .contenedor > * { min-width: 0; }
+  .hero            { grid-area: hero; }
+  .foto            { grid-area: foto; }
+  .seccion-precios { grid-area: precios; }
+  .nota-pie        { grid-area: nota; }
+}
